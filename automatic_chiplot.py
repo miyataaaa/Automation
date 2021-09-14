@@ -309,3 +309,26 @@ class automation:
 
             with pd.ExcelWriter(fpath, mode="a", engine="openpyxl") as writer:
                 df.to_excel(writer, sheet_name="kb-coef-r2")
+                
+
+if __name__ == "__main__":
+    
+    auto = automation()
+    kwargs = {
+        "dirpath" : r"E:\miyata\VBA\automation\m1_n1.95",
+        "m" : 1.,
+        "n" : 1.8
+    }
+    fname = "compiled_m=1.0_n=1.8" + ".xlsx"
+    df_sheet = auto.value_from_compiled_file(fname, **kwargs)
+    coefs, r2s = auto.LinearRegression(df_sheet)
+    auto.compiled_chiplot(df_sheet, coefs, **kwargs)
+    print(coefs.min(), coefs.max())
+
+    U0 = 1
+    A0 = 1
+    kb = auto.calc_kb(coefs, U0, A0, **kwargs)
+    print(kb.min(), kb.max())
+    print(kb.shape)
+    columns_name = auto.make_columns_name(df_sheet)
+    auto.save_kb_coef_r2(kb, coefs, r2s, columns_name, **kwargs)
